@@ -1,0 +1,19 @@
+- name: Installer Docker
+  raw: yum install -y docker
+
+- name: Démarrer Docker
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Déployer le conteneur MariaDB
+  docker_container:
+    name: mariadb
+    image: mariadb
+    state: started
+    env:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: testdb
+    ports:
+      - "3306:3306"

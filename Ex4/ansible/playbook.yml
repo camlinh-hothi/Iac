@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Installer Python 3 (si nécessaire)
+      raw: yum install -y python3
+
+- hosts: nginx
+  roles:
+    - nginx
+
+- hosts: php
+  roles:
+    - php
+
+- hosts: db
+  roles:
+    - db

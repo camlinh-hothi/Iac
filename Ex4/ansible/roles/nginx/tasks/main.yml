@@ -1,0 +1,16 @@
+- name: Installer Docker
+  raw: yum install -y docker
+
+- name: Démarrer Docker
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Déployer le conteneur NGINX
+  docker_container:
+    name: nginx
+    image: nginx
+    state: started
+    ports:
+      - "8080:80"
