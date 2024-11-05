@@ -1,0 +1,52 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Installer Python 3 (si nécessaire)
+      raw: yum install -y python3
+
+    - name: Installer Docker
+      raw: yum install -y docker
+
+    - name: Démarrer et activer Docker
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Télécharger le script d'installation de pip si nécessaire
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py
+        dest: /tmp/get-pip.py
+      when: ansible_facts['pkg_mgr'] == 'unknown'
+
+    - name: Installer pip avec get-pip.py
+      command: python3 /tmp/get-pip.py
+      args:
+        creates: /usr/local/bin/pip3
+
+    - name: Installer des versions compatibles de requests et urllib3
+      command: /usr/local/bin/pip3 install requests==2.25.1 urllib3==1.26.5
+
+
+
+- hosts: nginx
+  become: yes
+  tasks:
+    - name: Déployer le conteneur NGINX
+      docker_container:
+        name: nginx
+        image: nginx:latest
+        state: started
+        ports:
+          - "8080:80"
+
+- hosts: php
+  become: yes
+  tasks:
+    - name: Déployer le conteneur PHP-FPM
+      docker_container:
+        name: php-fpm
+        image: php:7.4-fpm
+        state: started
+        ports:
+          - "9000:9000"

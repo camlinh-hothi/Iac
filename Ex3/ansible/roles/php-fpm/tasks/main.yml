@@ -1,0 +1,10 @@
+- name: Installer PHP et PHP-FPM
+  yum:
+    name: php-fpm
+    state: present
+
+- name: Démarrer et activer PHP-FPM
+  service:
+    name: php-fpm
+    state: started
+    enabled: true
